@@ -44,7 +44,7 @@ a{color:inherit;text-decoration:none}
 .cta-banner{margin:40px 0;padding:28px;border-radius:14px;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;text-align:center}
 .cta-banner h2{margin:0 0 8px}
 .cta-banner p{margin:0 0 16px;opacity:.95}
-.cta-banner .cta {display: flex;justify-content: center;gap: 12px;flex-wrap: wrap}
+
 
 
 .footer{padding:28px 0;border-top:1px solid rgba(255,255,255,.08);font-size:14px;opacity:.9}
