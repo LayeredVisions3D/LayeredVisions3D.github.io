@@ -53,8 +53,8 @@ document.getElementById('save-contact').addEventListener('click', () => {
 });
 
 // Links to replace with your real URLs
-document.getElementById('wholesale-form').href = 'https://forms.gle/REPLACE_WITH_YOUR_WHOLESALE_FORM';
-document.getElementById('shop-link').href = 'https://REPLACE_WITH_YOUR_SHOP_LINK';
+document.getElementById('wholesale-form').href = 'https://docs.google.com/forms/d/e/1FAIpQLSfnHkk0mn52RoVqnh6q5E7ObPLPhLmeNUTDsqNGBTjaO7Budw/viewform';
+document.getElementById('shop-link').href = 'https://www.etsy.com/shop/LayeredVisions3DShop?ref=shop_profile&listing_id=4357928352';
 
 // Lead form (static demo). Replace with real endpoint (e.g., Netlify Forms, Formspree, or your backend).
 document.getElementById('lead-form').addEventListener('submit', async (e) => {
