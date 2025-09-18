@@ -37,7 +37,7 @@ document.getElementById('save-contact').addEventListener('click', () => {
     'TITLE:Sales',
     'TEL;TYPE=WORK,VOICE:+1-718-419-1050',
     'EMAIL;TYPE=PREF,INTERNET:layeredvisions3d@gmail.com',
-    'URL:https://yourdomain.com', // TODO: replace with your site
+    'URL:https://layeredvisions3d.com', // TODO: replace with your site
     'ADR;TYPE=WORK:;;Brooklyn;NY;112xx;USA',
     'END:VCARD'
   ].join('\n');
