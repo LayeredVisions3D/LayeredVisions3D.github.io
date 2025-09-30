@@ -266,8 +266,8 @@
 
     // Determine postcards bundle from qty
     function postcardsForQty(q){
-      if(q>0 && q<=50) return 50;
-      if(q<=100) return 100;
+      if(q>0 && q<=49) return 50;
+      if(q<=99) return 100;
       if(q>100) return 250;
       return 0;
     }
