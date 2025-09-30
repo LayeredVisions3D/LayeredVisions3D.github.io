@@ -1,0 +1,429 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Event Photo Album Keychains — Price Calculator</title>
+  <style>
+    :root{
+      --bg:#0f1221;
+      --card:#171a2b;
+      --ink:#e9ecff;
+      --muted:#b7bdff;
+      --accent:#7a86ff;
+      --accent-2:#a7ffcb;
+      --line:#2a2f4a;
+      --good:#a7ffcb;
+      --warn:#ffd166;
+      --danger:#ff7b7b;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif}
+    h1,h2,h3{margin:0 0 .5rem}
+    a{color:var(--accent)}
+    .wrap{max-width:980px;margin:24px auto;padding:0 16px 48px}
+    .page-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+    .pill{background:linear-gradient(90deg, var(--accent), var(--accent-2));color:#101320;border:none;border-radius:999px;padding:8px 12px;font-weight:700}
+    .grid{display:grid;grid-template-columns: 1.2fr .8fr;gap:16px}
+    @media (max-width: 920px){ .grid{grid-template-columns:1fr} }
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+    .section{margin-bottom:14px}
+    .section + .section{border-top:1px dashed var(--line);padding-top:14px}
+    label{display:block;font-weight:600;margin:0 0 6px}
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .row > *{flex:1}
+    .muted{color:var(--muted)}
+    select, input[type="number"], input[type="text"], input[type="email"]{
+      width:100%;background:#0b0e1a;color:var(--ink);
+      border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+      outline:none;
+    }
+    input[type="radio"], input[type="checkbox"]{transform:scale(1.1)}
+    .choices{display:grid;gap:10px}
+    .choice{display:flex;gap:10px;align-items:flex-start;background:#0b0e1a;border:1px solid var(--line);border-radius:12px;padding:12px}
+    .choice .meta{flex:1}
+    .choice .price{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-weight:700;
+      font-size:1.1rem;
+      color:var(--accent);
+      white-space:nowrap;
+    }
+    ul.bullets{margin:.35rem 0 .25rem 1.25rem}
+    ul.bullets li{margin:.25rem 0}
+    .i{display:inline-flex;justify-content:center;align-items:center;
+        width:18px;height:18px;border-radius:50%;border:1px solid var(--muted);
+        color:var(--muted);font-size:12px;line-height:1;cursor:pointer;position:relative;margin-left:6px}
+    .tooltip{position:absolute;inset:auto auto auto 100%;margin-left:8px;z-index:5;min-width:220px;
+      background:#0b0e1a;border:1px solid var(--line);color:var(--ink);padding:10px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.35);display:none}
+    .i[data-open="1"] .tooltip{display:block}
+    .totals{position:sticky;top:12px}
+    .line{display:flex;justify-content:space-between;gap:8px;margin:8px 0}
+    .line.total{font-size:1.25rem;font-weight:900;border-top:2px solid var(--line);padding-top:8px}
+    .line small{color:var(--muted)}
+    .help{display:flex;gap:10px;align-items:center;margin-top:8px}
+    .btn{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid var(--accent);color:var(--ink);padding:10px 12px;border-radius:10px;cursor:pointer}
+    .btn.primary{background:var(--accent);color:#0b0e1a;border:none;font-weight:800}
+    .note{font-size:.9rem;color:var(--muted)}
+    .warn{color:var(--warn)}
+    .ok{color:var(--good)}
+    .danger{color:var(--danger)}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
+    .submit-card h2{display:flex;align-items:center;gap:8px}
+    .submit-card h2::after{content:"(Name & Email)";font-weight:500;color:var(--muted);font-size:.95rem}
+    .pill.fake{cursor:default}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="page-title">
+      <h1>Event Photo Album Keychains — Price Calculator</h1>
+      <button class="pill" id="copySummary">Copy Quote</button>
+    </div>
+
+    <div class="grid">
+      <!-- Left: Inputs -->
+      <div class="card">
+        <!-- Album -->
+        <div class="section">
+          <h2>Album</h2>
+          <div class="choices" role="group" aria-label="Album Tier">
+            <label class="choice">
+              <input type="radio" name="albumTier" value="t1" checked />
+              <div class="meta">
+                <div class="row" style="align-items:center">
+                  <strong>Tier 1</strong>
+                  <span class="price">$45</span>
+                </div>
+                <ul class="bullets">
+                  <li>Up to <strong>500 uploads</strong> of photos &amp; videos</li>
+                  <li>Upload for up to <strong>7 days</strong></li>
+                  <li>Customizable Page Options</li>
+                  <li>Access to a Photo wall
+                    <span class="i" tabindex="0" role="button" aria-expanded="false" aria-label="More info">i
+                      <span class="tooltip" role="tooltip">Link to a slideshow page showing uploaded photos &amp; videos, viewable online.</span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </label>
+
+            <label class="choice">
+              <input type="radio" name="albumTier" value="t2" />
+              <div class="meta">
+                <div class="row" style="align-items:center">
+                  <strong>Tier 2</strong>
+                  <span class="price">$110</span>
+                </div>
+                <ul class="bullets">
+                  <li><strong>Unlimited uploads</strong> of photos &amp; videos</li>
+                  <li>Upload for up to <strong>30 days</strong></li>
+                  <li>Advanced customization options</li>
+                  <li>Moderation tools
+                    <span class="i" tabindex="0" role="button" aria-expanded="false" aria-label="More info">i
+                      <span class="tooltip" role="tooltip">Full control over which uploads are approved to appear; auto-approve trusted guests; and more.</span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Keychains -->
+        <div class="section">
+          <h2>Keychains</h2>
+          <div class="row">
+            <div>
+              <label for="kcQty">Quantity <small class="muted">(25+)</small></label>
+              <input id="kcQty" type="number" min="0" step="1" placeholder="e.g., 120" />
+            </div>
+            <div>
+              <label>Unit Price</label>
+              <div id="kcUnit" class="mono" style="color:var(--accent)">$0.00</div>
+            </div>
+            <div>
+              <label>Subtotal</label>
+              <div id="kcSubtotal" class="mono" style="color:var(--accent)">$0.00</div>
+            </div>
+          </div>
+          <div class="note">
+            <div>25–49 units — $3.50 each</div>
+            <div>50–99 units — $3.25 each</div>
+            <div>100–249 units — $3.00 each</div>
+            <div>250+ units — $2.75 each</div>
+          </div>
+          <p id="kcHint" class="note"></p>
+
+          <!-- Post Cards (auto, non-editable) -->
+          <div class="row" style="margin-top:10px">
+            <div style="flex:1 1 100%">
+              <label>Post Cards <small class="muted">(auto-selected)</small></label>
+              <div class="pill fake" id="postcardsDisplay" style="display:inline-flex;margin-top:6px">None</div>
+              <input type="hidden" id="postcardsHidden" name="postcards" value="0" />
+            </div>
+          </div>
+          <p class="note">This will auto-match your keychain quantity so you don’t have to pick anything.</p>
+        </div>
+
+        <!-- Delivery -->
+        <div class="section">
+          <h2>Delivery</h2>
+          <div class="choices" role="group" aria-label="Delivery">
+            <label class="choice">
+              <input type="radio" name="ship" value="ship" checked />
+              <div class="meta">
+                <strong>Flat Rate Shipping</strong> <span class="price">$10</span>
+                <p class="muted" style="margin:.25rem 0 0">Ships anywhere in the U.S.</p>
+              </div>
+            </label>
+            <label class="choice">
+              <input type="radio" name="ship" value="pickup" />
+              <div class="meta">
+                <strong>Local Pickup</strong> <span class="price">$0</span>
+                <p class="muted" style="margin:.25rem 0 0">Pick up locally (Brooklyn/NYC area).</p>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Summary + Submit -->
+      <div>
+        <div class="card totals" id="summaryCard">
+          <h2>Quote Summary</h2>
+          <div id="lines"></div>
+          <div class="line total"><div>Total</div><div id="grand" class="mono" style="color:var(--accent)">$0.00</div></div>
+          <div class="help">
+            <button class="btn primary" id="copyBreakdown" type="button">Copy Breakdown</button>
+            <button class="btn" id="resetAll" type="button">Reset</button>
+          </div>
+          <p class="note">Prices based on selections above. This is an instant quote, not an invoice.</p>
+        </div>
+
+        <!-- Submit Section -->
+        <div class="card submit-card" id="submitCard" style="margin-top:16px">
+          <h2>Submit Your Quote</h2>
+          <form id="quoteForm" action="https://formspree.io/f/yourFormID" method="POST">
+            <div class="row">
+              <div>
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required />
+              </div>
+              <div>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="_replyto" required />
+              </div>
+            </div>
+            <input type="hidden" id="quoteData" name="quoteData" />
+            <button class="btn primary" id="submitBtn" type="submit" style="margin-top:10px">Submit Quote</button>
+          </form>
+          <p class="note">You’ll receive a copy of this quote by email.</p>
+          <p class="note danger" id="formNote" style="display:none">Heads up: form endpoint not set. Replace the action URL with your Formspree endpoint.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const money = (n)=>"$"+(n||0).toFixed(2);
+
+    const albumRadios = [...document.querySelectorAll('input[name="albumTier"]')];
+    const postcardsDisplay = document.getElementById('postcardsDisplay');
+    const postcardsHidden = document.getElementById('postcardsHidden');
+    const kcQty = document.getElementById('kcQty');
+    const kcUnit = document.getElementById('kcUnit');
+    const kcSubtotal = document.getElementById('kcSubtotal');
+    const kcHint = document.getElementById('kcHint');
+    const shipRadios = [...document.querySelectorAll('input[name="ship"]')];
+    const linesWrap = document.getElementById('lines');
+    const grandEl = document.getElementById('grand');
+    const resetBtn = document.getElementById('resetAll');
+    const copyBtn = document.getElementById('copyBreakdown');
+    const copyQuoteBtn = document.getElementById('copySummary');
+    const quoteData = document.getElementById('quoteData');
+    const form = document.getElementById('quoteForm');
+    const formNote = document.getElementById('formNote');
+
+    if(form && form.getAttribute('action').includes('yourFormID')){
+      formNote.style.display = 'block';
+    }
+
+    const postcardPrices = {0:0, 50:70, 100:100, 250:200};
+    const albumPrices = {t1:45, t2:110};
+
+    function keychainUnit(q){
+      if(q===0) return 0;
+      if(q<25) return NaN;
+      if(q<=49) return 3.50;
+      if(q<=99) return 3.25;
+      if(q<=249) return 3.00;
+      return 2.75; // 250+
+    }
+
+    function postcardsForQty(q){
+      if(q>0 && q<=50) return 50;
+      if(q<=100) return 100;
+      if(q>100) return 250;
+      return 0;
+    }
+
+    function updatePostcardsUI(q){
+      const pcKey = postcardsForQty(q);
+      postcardsHidden.value = pcKey.toString();
+      const label = pcKey===0 ? "None" : `Up to ${pcKey} — $${postcardPrices[pcKey]}`;
+      postcardsDisplay.textContent = label;
+    }
+
+    function compute(){
+      const albumChoice = albumRadios.find(r=>r.checked)?.value;
+      const albumCost = albumPrices[albumChoice] ?? 0;
+
+      const q = parseInt(kcQty.value,10) || 0;
+      const unit = keychainUnit(q);
+      let kcCost = 0;
+      kcHint.textContent = "";
+      kcHint.className = "note";
+
+      if(Number.isNaN(unit)){
+        kcUnit.textContent = "$—";
+        kcSubtotal.textContent = "$—";
+        updatePostcardsUI(q);
+        if(q>0 && q<25){
+          kcHint.textContent = "Minimum for tiered pricing is 25 units.";
+          kcHint.classList.add('warn');
+        }
+      }else{
+        kcCost = unit * q;
+        kcUnit.textContent = money(unit);
+        kcSubtotal.textContent = money(kcCost);
+        updatePostcardsUI(q);
+      }
+
+      const pcKey = parseInt(postcardsHidden.value,10) || 0;
+      const pcCost = postcardPrices[pcKey] ?? 0;
+
+      const shipChoice = shipRadios.find(r=>r.checked)?.value || 'ship';
+      const shipCost = shipChoice === 'ship' ? 10 : 0;
+
+      const lines = [];
+      if(albumCost>0){
+        lines.push({label: albumChoice==='t1'?'Album — Tier 1':'Album — Tier 2', value: albumCost});
+      }
+      if(pcCost>0){
+        lines.push({label: `Post Cards — up to ${pcKey}`, value: pcCost});
+      }
+      if(kcCost>0){
+        lines.push({label: `Keychains — ${q} @ ${money(unit)}`, value: kcCost});
+      }
+      if(shipCost>0){
+        lines.push({label: 'Flat Rate Shipping', value: shipCost});
+      }else{
+        lines.push({label: 'Local Pickup', value: 0});
+      }
+
+      linesWrap.innerHTML = "";
+      lines.forEach(l=>{
+        const div = document.createElement('div');
+        div.className = 'line';
+        div.innerHTML = `<div>${l.label}</div><div class="mono" style="color:var(--accent)">${money(l.value)}</div>`;
+        linesWrap.appendChild(div);
+      });
+
+      const grand = albumCost + pcCost + kcCost + shipCost;
+      grandEl.textContent = money(grand);
+      const breakdownText = lines.map(l=>`${l.label}: ${money(l.value)}`).join("\n") + `\nTotal: ${money(grand)}`;
+      return breakdownText;
+    }
+
+    // Tooltip behavior
+    function setupTooltips(){
+      const icons = document.querySelectorAll('.i');
+      icons.forEach(icon => {
+        const tooltip = icon.querySelector('.tooltip');
+        function open(){
+          icons.forEach(i => { if(i!==icon){ i.removeAttribute('data-open'); i.setAttribute?.('aria-expanded','false'); } });
+          icon.setAttribute('data-open','1');
+          icon.setAttribute('aria-expanded','true');
+        }
+        function close(){
+          icon.removeAttribute('data-open');
+          icon.setAttribute('aria-expanded','false');
+        }
+        function toggle(){
+          if(icon.getAttribute('data-open')==='1'){ close(); } else { open(); }
+        }
+        icon.addEventListener('click', (e)=>{ e.stopPropagation(); toggle(); });
+        icon.addEventListener('keydown', (e)=>{
+          if(e.key==='Enter' || e.key===' '){ e.preventDefault(); e.stopPropagation(); toggle(); }
+          if(e.key==='Escape'){ e.preventDefault(); e.stopPropagation(); close(); }
+        });
+        if(tooltip){ tooltip.addEventListener('click', (e)=> e.stopPropagation()); }
+      });
+      document.addEventListener('click', (e)=>{
+        if(!e.target.closest('.i')){
+          document.querySelectorAll('.i').forEach(i=>{
+            i.removeAttribute('data-open');
+            i.setAttribute?.('aria-expanded','false');
+          });
+        }
+      });
+    }
+
+    // Events
+    [...albumRadios, kcQty, ...shipRadios].forEach(el=>{
+      el.addEventListener('input', ()=>{ compute(); });
+      el.addEventListener('change', ()=>{ compute(); });
+    });
+
+    resetBtn.addEventListener('click', ()=>{
+      document.querySelector('input[name="albumTier"][value="t1"]').checked = true;
+      kcQty.value = "";
+      document.querySelector('input[name="ship"][value="ship"]').checked = true;
+      updatePostcardsUI(0);
+      compute();
+    });
+
+    function copyToClipboard(text){
+      if(navigator.clipboard && window.isSecureContext){
+        return navigator.clipboard.writeText(text);
+      }else{
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position='fixed';
+        ta.style.opacity='0';
+        document.body.appendChild(ta);
+        ta.focus(); ta.select();
+        try{ document.execCommand('copy'); }catch(e){}
+        ta.remove();
+        return Promise.resolve();
+      }
+    }
+
+    copyBtn.addEventListener('click', async ()=>{
+      const text = compute();
+      await copyToClipboard(text);
+      copyBtn.textContent = "Copied!";
+      setTimeout(()=>copyBtn.textContent="Copy Breakdown", 1200);
+    });
+
+    copyQuoteBtn.addEventListener('click', async ()=>{
+      const text = compute();
+      await copyToClipboard("Quote — Event Photo Album Keychains\n\n" + text);
+      const btn = document.getElementById('copySummary');
+      btn.textContent = "Copied!";
+      setTimeout(()=>btn.textContent="Copy Quote", 1200);
+    });
+
+    form.addEventListener('submit', function(){
+      quoteData.value = compute();
+    });
+
+    // Initial run
+    updatePostcardsUI(0);
+    compute();
+    setupTooltips();
+  </script>
+</body>
+</html>
