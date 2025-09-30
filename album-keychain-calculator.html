@@ -402,6 +402,30 @@
     // Initial run
     updatePostcardsUI(0);
     compute();
+
+    // Enable tooltip toggle on info icons
+document.querySelectorAll('.i').forEach(icon => {
+  icon.addEventListener('click', e => {
+    // close any open tooltips first
+    document.querySelectorAll('.i').forEach(i => {
+      if (i !== icon) i.removeAttribute('data-open');
+    });
+    // toggle this one
+    if (icon.getAttribute('data-open') === '1') {
+      icon.removeAttribute('data-open');
+    } else {
+      icon.setAttribute('data-open', '1');
+    }
+  });
+});
+
+// Close tooltip if clicking elsewhere
+document.addEventListener('click', e => {
+  if (!e.target.closest('.i')) {
+    document.querySelectorAll('.i').forEach(i => i.removeAttribute('data-open'));
+  }
+});
+
   </script>
 </body>
 </html>
