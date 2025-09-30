@@ -399,32 +399,66 @@
       quoteData.value = compute();
     });
 
-    // Initial run
-    updatePostcardsUI(0);
-    compute();
+   /* === FIX: clickable (and keyboard) tooltips for .i icons === */
+(function setupInfoIcons(){
+  const icons = document.querySelectorAll('.i');
 
-    // Enable tooltip toggle on info icons
-document.querySelectorAll('.i').forEach(icon => {
-  icon.addEventListener('click', e => {
-    // close any open tooltips first
-    document.querySelectorAll('.i').forEach(i => {
-      if (i !== icon) i.removeAttribute('data-open');
+  function closeAll(){
+    icons.forEach(i => {
+      i.removeAttribute('data-open');
+      if (i.hasAttribute('aria-expanded')) i.setAttribute('aria-expanded','false');
     });
-    // toggle this one
-    if (icon.getAttribute('data-open') === '1') {
+  }
+
+  icons.forEach(icon => {
+    // Accessibility (safe even if already set in HTML)
+    icon.setAttribute('role','button');
+    icon.setAttribute('tabindex','0');
+    icon.setAttribute('aria-expanded','false');
+
+    const tooltip = icon.querySelector('.tooltip');
+
+    const open = () => {
+      closeAll();
+      icon.setAttribute('data-open','1');
+      icon.setAttribute('aria-expanded','true');
+    };
+    const close = () => {
       icon.removeAttribute('data-open');
-    } else {
-      icon.setAttribute('data-open', '1');
+      icon.setAttribute('aria-expanded','false');
+    };
+    const toggle = () => (icon.getAttribute('data-open') === '1' ? close() : open());
+
+    // Click to toggle (prevent label/radio side-effects)
+    icon.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggle();
+    });
+
+    // Keyboard: Enter/Space open/close, Esc closes
+    icon.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        e.stopPropagation();
+        toggle();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        close();
+      }
+    });
+
+    // Don’t close if clicking inside the tooltip
+    if (tooltip) {
+      tooltip.addEventListener('click', (e) => e.stopPropagation());
     }
   });
-});
 
-// Close tooltip if clicking elsewhere
-document.addEventListener('click', e => {
-  if (!e.target.closest('.i')) {
-    document.querySelectorAll('.i').forEach(i => i.removeAttribute('data-open'));
-  }
-});
+  // Click anywhere else to close
+  document.addEventListener('click', () => closeAll());
+})();
+
 
   </script>
 </body>
