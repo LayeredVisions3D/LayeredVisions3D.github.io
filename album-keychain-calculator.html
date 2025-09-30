@@ -409,7 +409,11 @@
       if (i.hasAttribute('aria-expanded')) i.setAttribute('aria-expanded','false');
     });
   }
-
+    // Initial run
+    updatePostcardsUI(0);
+    compute();
+    setupTooltips();
+  
   icons.forEach(icon => {
     // Accessibility (safe even if already set in HTML)
     icon.setAttribute('role','button');
