@@ -52,12 +52,21 @@
     }
     ul.bullets{margin:.35rem 0 .25rem 1.25rem}
     ul.bullets li{margin:.25rem 0}
-    .i{display:inline-flex;justify-content:center;align-items:center;
-        width:18px;height:18px;border-radius:50%;border:1px solid var(--muted);
-        color:var(--muted);font-size:12px;line-height:1;cursor:pointer;position:relative;margin-left:6px}
-    .tooltip{position:absolute;inset:auto auto auto 100%;margin-left:8px;z-index:5;min-width:220px;
-      background:#0b0e1a;border:1px solid var(--line);color:var(--ink);padding:10px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.35);display:none}
+    /* Info icons & tooltip */
+    .choice{ position: relative; } /* ensures z-index context */
+    .i{
+      display:inline-flex;justify-content:center;align-items:center;
+      width:18px;height:18px;border-radius:50%;border:1px solid var(--muted);
+      color:var(--muted);font-size:12px;line-height:1;cursor:pointer;position:relative;margin-left:6px;
+      z-index:3;
+    }
+    .tooltip{
+      position:absolute;inset:auto auto auto 100%;margin-left:8px;z-index:4;min-width:220px;
+      background:#0b0e1a;border:1px solid var(--line);color:var(--ink);padding:10px;border-radius:10px;
+      box-shadow:0 6px 18px rgba(0,0,0,.35);display:none
+    }
     .i[data-open="1"] .tooltip{display:block}
+
     .totals{position:sticky;top:12px}
     .line{display:flex;justify-content:space-between;gap:8px;margin:8px 0}
     .line.total{font-size:1.25rem;font-weight:900;border-top:2px solid var(--line);padding-top:8px}
@@ -79,7 +88,7 @@
   <div class="wrap">
     <div class="page-title">
       <h1>Event Photo Album Keychains — Price Calculator</h1>
-      <button class="pill" id="copySummary">Copy Quote</button>
+      <button class="pill" id="copySummary" type="button">Copy Quote</button>
     </div>
 
     <div class="grid">
@@ -101,8 +110,8 @@
                   <li>Upload for up to <strong>7 days</strong></li>
                   <li>Customizable Page Options</li>
                   <li>Access to a Photo wall
-                    <span class="i">i
-                      <span class="tooltip">Link to a slideshow page showing uploaded photos &amp; videos, viewable online.</span>
+                    <span class="i" tabindex="0" role="button" aria-expanded="false" aria-label="More info">i
+                      <span class="tooltip" role="tooltip">Link to a slideshow page showing uploaded photos &amp; videos, viewable online.</span>
                     </span>
                   </li>
                 </ul>
@@ -121,8 +130,8 @@
                   <li>Upload for up to <strong>30 days</strong></li>
                   <li>Advanced customization options</li>
                   <li>Moderation tools
-                    <span class="i">i
-                      <span class="tooltip">Full control over which uploads are approved to appear; auto-approve trusted guests; and more.</span>
+                    <span class="i" tabindex="0" role="button" aria-expanded="false" aria-label="More info">i
+                      <span class="tooltip" role="tooltip">Full control over which uploads are approved to appear; auto-approve trusted guests; and more.</span>
                     </span>
                   </li>
                 </ul>
@@ -205,7 +214,7 @@
         <!-- Submit Section -->
         <div class="card submit-card" id="submitCard" style="margin-top:16px">
           <h2>Submit Your Quote</h2>
-          <form id="quoteForm" action="https://formspree.io/f/mdkwglow" method="POST">
+          <form id="quoteForm" action="https://formspree.io/f/yourFormID" method="POST">
             <div class="row">
               <div>
                 <label for="name">Name</label>
@@ -246,12 +255,12 @@
     const form = document.getElementById('quoteForm');
     const formNote = document.getElementById('formNote');
 
-    // Show warning if form action isn't configured
+    // show warning if form action isn't configured
     if(form && form.getAttribute('action').includes('yourFormID')){
       formNote.style.display = 'block';
     }
 
-    const postcardPrices = {0:0, 50:70, 100:100, 250:150};
+    const postcardPrices = {0:0, 50:70, 100:100, 250:200};
     const albumPrices = {t1:45, t2:110};
 
     function keychainUnit(q){
@@ -260,11 +269,9 @@
       if(q<=49) return 3.50;
       if(q<=99) return 3.25;
       if(q<=249) return 3.00;
-      // 250+
-      return 2.75;
+      return 2.75; // 250+
     }
 
-    // Determine postcards bundle from qty
     function postcardsForQty(q){
       if(q>0 && q<=50) return 50;
       if(q<=100) return 100;
@@ -280,11 +287,9 @@
     }
 
     function compute(){
-      // Album
       const albumChoice = albumRadios.find(r=>r.checked)?.value;
       const albumCost = albumPrices[albumChoice] ?? 0;
 
-      // Keychains
       const q = parseInt(kcQty.value,10) || 0;
       const unit = keychainUnit(q);
       let kcCost = 0;
@@ -306,15 +311,12 @@
         updatePostcardsUI(q);
       }
 
-      // Postcards (auto from qty)
       const pcKey = parseInt(postcardsHidden.value,10) || 0;
       const pcCost = postcardPrices[pcKey] ?? 0;
 
-      // Shipping
       const shipChoice = shipRadios.find(r=>r.checked)?.value || 'ship';
       const shipCost = shipChoice === 'ship' ? 10 : 0;
 
-      // Build summary lines
       const lines = [];
       if(albumCost>0){
         lines.push({label: albumChoice==='t1'?'Album — Tier 1':'Album — Tier 2', value: albumCost});
@@ -331,7 +333,6 @@
         lines.push({label: 'Local Pickup', value: 0});
       }
 
-      // Render lines
       linesWrap.innerHTML = "";
       lines.forEach(l=>{
         const div = document.createElement('div');
@@ -346,24 +347,7 @@
       return breakdownText;
     }
 
-    // Events
-    [...albumRadios, kcQty, ...shipRadios].forEach(el=>{
-      el.addEventListener('input', ()=>{
-        compute();
-      });
-      el.addEventListener('change', ()=>{
-        compute();
-      });
-    });
-
-    resetBtn.addEventListener('click', ()=>{
-      document.querySelector('input[name="albumTier"][value="t1"]').checked = true;
-      kcQty.value = "";
-      document.querySelector('input[name="ship"][value="ship"]').checked = true;
-      updatePostcardsUI(0);
-      compute();
-    });
-
+    // copy helpers
     function copyToClipboard(text){
       if(navigator.clipboard && window.isSecureContext){
         return navigator.clipboard.writeText(text);
@@ -395,75 +379,88 @@
       setTimeout(()=>btn.textContent="Copy Quote", 1200);
     });
 
+    // reset
+    const radios = [...albumRadios, ...shipRadios];
+    [...radios, kcQty].forEach(el=>{
+      el.addEventListener('input', compute);
+      el.addEventListener('change', compute);
+    });
+
+    resetBtn.addEventListener('click', ()=>{
+      document.querySelector('input[name="albumTier"][value="t1"]').checked = true;
+      kcQty.value = "";
+      document.querySelector('input[name="ship"][value="ship"]').checked = true;
+      updatePostcardsUI(0);
+      compute();
+    });
+
+    // form submit
     form.addEventListener('submit', function(){
       quoteData.value = compute();
     });
 
-   /* === FIX: clickable (and keyboard) tooltips for .i icons === */
-(function setupInfoIcons(){
-  const icons = document.querySelectorAll('.i');
-
-  function closeAll(){
-    icons.forEach(i => {
-      i.removeAttribute('data-open');
-      if (i.hasAttribute('aria-expanded')) i.setAttribute('aria-expanded','false');
-    });
-  }
     // Initial run
     updatePostcardsUI(0);
     compute();
-    setupTooltips();
-  
-  icons.forEach(icon => {
-    // Accessibility (safe even if already set in HTML)
-    icon.setAttribute('role','button');
-    icon.setAttribute('tabindex','0');
-    icon.setAttribute('aria-expanded','false');
 
-    const tooltip = icon.querySelector('.tooltip');
+    /* === FIX: reliable ⓘ tooltips inside <label> ===
+       Uses a capture-phase click listener so the label's radio doesn't swallow the click.
+       Also adds keyboard support & outside-click close. */
+    (function setupInfoIcons(){
+      const icons = document.querySelectorAll('.i');
 
-    const open = () => {
-      closeAll();
-      icon.setAttribute('data-open','1');
-      icon.setAttribute('aria-expanded','true');
-    };
-    const close = () => {
-      icon.removeAttribute('data-open');
-      icon.setAttribute('aria-expanded','false');
-    };
-    const toggle = () => (icon.getAttribute('data-open') === '1' ? close() : open());
-
-    // Click to toggle (prevent label/radio side-effects)
-    icon.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      toggle();
-    });
-
-    // Keyboard: Enter/Space open/close, Esc closes
-    icon.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        e.stopPropagation();
-        toggle();
-      } else if (e.key === 'Escape') {
-        e.preventDefault();
-        e.stopPropagation();
-        close();
+      function closeAll(){
+        icons.forEach(i => {
+          i.removeAttribute('data-open');
+          if (i.hasAttribute('aria-expanded')) i.setAttribute('aria-expanded','false');
+        });
       }
-    });
 
-    // Don’t close if clicking inside the tooltip
-    if (tooltip) {
-      tooltip.addEventListener('click', (e) => e.stopPropagation());
-    }
-  });
+      function toggle(icon){
+        if (icon.getAttribute('data-open') === '1') {
+          icon.removeAttribute('data-open');
+          icon.setAttribute('aria-expanded','false');
+        } else {
+          closeAll();
+          icon.setAttribute('data-open','1');
+          icon.setAttribute('aria-expanded','true');
+        }
+      }
 
-  // Click anywhere else to close
-  document.addEventListener('click', () => closeAll());
-})();
+      // Capture-phase click: runs before label/radio default behavior
+      document.addEventListener('click', (e) => {
+        const icon = e.target.closest('.i');
+        if (icon) {
+          e.preventDefault();
+          e.stopPropagation();
+          toggle(icon);
+        } else {
+          closeAll();
+        }
+      }, true); // <-- capture = true
 
+      // Keyboard support + prevent tooltip clicks from closing
+      icons.forEach(icon => {
+        icon.setAttribute('role','button');
+        icon.setAttribute('tabindex','0');
+        icon.setAttribute('aria-expanded','false');
 
+        icon.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            toggle(icon);
+          } else if (e.key === 'Escape') {
+            e.preventDefault();
+            e.stopPropagation();
+            closeAll();
+          }
+        });
+
+        const tip = icon.querySelector('.tooltip');
+        if (tip) tip.addEventListener('click', (e)=> e.stopPropagation());
+      });
+    })();
   </script>
 </body>
 </html>
