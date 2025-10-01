@@ -93,7 +93,19 @@ header .sub {
   summary::-webkit-details-marker{display:none}
   .sum-left{display:grid;gap:2px;min-width:0;flex:1}
   .title{font-weight:800} .desc{color:var(--muted);font-size:13px;line-height:1.4}
-  .badge{font-size:11px;color:#0a1022;background:var(--accent2);padding:4px 8px;border-radius:999px;font-weight:700}
+  .badge {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+/* Variants */
+.badge.popular  { background: var(--accent2); color: #0a1022; }
+.badge.easy     { background: #4caf50; color: #fff; }
+.badge.advanced { background: #ff7b7b; color: #fff; }
+.badge.new      { background: #ffd166; color: #0a1022; }
+
   .body{border-top:1px dashed var(--border);padding:14px 16px 18px}
   .anim{display:flex;align-items:center;gap:12px;padding:10px;border:1px dashed var(--border);border-radius:10px}
   .meter{flex:1;min-width:220px}
