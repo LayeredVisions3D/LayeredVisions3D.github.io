@@ -170,7 +170,7 @@
             <div style="flex:1 1 100%">
               <label>Display Card & Packaging <small class="muted">(auto-selected)</small></label>
               <div class="pill fake" id="postcardsDisplay" style="display:inline-flex;margin-top:6px">None</div>
-              <input type="hidden" id="postcardsHidden" name="postcards" value="0" />
+              <input type="hidden" id="postcardsHidden" name="postcards" value="20" />
             </div>
           </div>
           <p class="note">This will auto-match your keychain quantity so you don’t have to pick anything.</p>
@@ -272,13 +272,14 @@
       return 2.75; // 250+
     }
 
-    function postcardsForQty(q){
-      if(q>0 && q<=20) return 20;
-      if(q<=50) return 50;
-      if(q<=100) return 100;
-      if(q>100) return 250;
-      return 0;
-    }
+   function postcardsForQty(q){
+  if (q === 0) return 20;       // default to cheapest when nothing entered yet
+  if (q <= 20) return 20;
+  if (q <= 50) return 50;
+  if (q <= 100) return 100;
+  return 250;                   // 101+
+}
+
 
     function updatePostcardsUI(q){
       const pcKey = postcardsForQty(q);
