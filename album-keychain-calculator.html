@@ -393,7 +393,7 @@
       document.querySelector('input[name="albumTier"][value="t1"]').checked = true;
       kcQty.value = "";
       document.querySelector('input[name="ship"][value="ship"]').checked = true;
-      updatePostcardsUI(0);
+      updatePostcardsUI(0); // will now set 20 by default because q===0
       compute();
     });
 
