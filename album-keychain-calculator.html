@@ -283,7 +283,7 @@
     function updatePostcardsUI(q){
       const pcKey = postcardsForQty(q);
       postcardsHidden.value = pcKey.toString();
-      const label = pcKey===0 ? "None" : `Up to ${pcKey} — $${postcardPrices[pcKey]}`;
+      const label = pcKey===0 ? "None" : `Display Cards — up to ${pcKey} — $${postcardPrices[pcKey]}`;
       postcardsDisplay.textContent = label;
     }
 
