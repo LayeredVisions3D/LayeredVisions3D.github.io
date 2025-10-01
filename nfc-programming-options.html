@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NFC Keychain Programming Options | Layered Visions 3D</title>
+<meta name="description" content="Explore all the ways we can program your NFC keychains — with simple explainers, tiny animations, and quick pros/cons to help you choose.">
+<style>
+  :root{
+    --bg:#0f1115;
+    --card:#151922;
+    --ink:#e8ecf1;
+    --muted:#aab2c0;
+    --accent:#78a6ff;
+    --accent-2:#8af5c5;
+    --border:#232a36;
+    --ok:#49d17f;
+    --warn:#ffbe5b;
+    --bad:#ff7a7a;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol";
+    background:linear-gradient(180deg,#0d1016, #0f1115 25% 75%, #0b0e13);
+    color:var(--ink);
+    line-height:1.5;
+  }
+  header{
+    padding: clamp(18px,2vw,28px);
+    position: sticky;
+    top:0;
+    z-index: 4;
+    backdrop-filter: blur(8px);
+    background: linear-gradient(180deg, rgba(15,17,21,.9), rgba(15,17,21,.55));
+    border-bottom:1px solid var(--border);
+  }
+  .wrap{max-width:1100px; margin:0 auto}
+  h1{margin:0 0 10px; font-weight:800; letter-spacing:.2px; font-size: clamp(22px, 4vw, 34px)}
+  .sub{color:var(--muted); font-size: clamp(13px,2.2vw,16px)}
+  .controls{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+  .controls > *{background:var(--card); border:1px solid var(--border); color:var(--ink); padding:10px 12px; border-radius:10px; font-size:14px}
+  select, input, button{appearance:none; outline:none}
+  button{cursor:pointer}
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:12px;
+    padding: 18px;
+  }
+  @media (min-width:840px){
+    .grid{grid-template-columns: 1fr 1fr}
+  }
+  details.option{
+    border:1px solid var(--border);
+    border-radius:14px;
+    background: var(--card);
+    box-shadow: 0 6px 16px rgba(0,0,0,.18);
+    overflow:hidden;
+  }
+  summary{
+    list-style:none;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding: 14px 16px;
+    cursor:pointer;
+    position:relative;
+  }
+  summary::-webkit-details-marker{display:none}
+  .icon{
+    width:34px; height:34px; display:inline-grid; place-items:center;
+    border-radius:9px;
+    background: radial-gradient(160% 160% at 0% 0%, rgba(120,166,255,.35), transparent 60%), 
+                linear-gradient(180deg, rgba(138,245,197,.15), transparent);
+    border:1px solid var(--border);
+  }
+  .title{font-weight:700; font-size:15px}
+  .desc{color:var(--muted); font-size:13px}
+  .badge{
+    font-size:11px; color:#0a1022; background:var(--accent-2); padding:4px 8px; border-radius:999px; margin-left:auto; font-weight:700;
+  }
+  .chev{
+    width:18px; height:18px; margin-left:8px; opacity:.8; transform: rotate(0deg); transition: .25s ease;
+  }
+  details[open] .chev{transform: rotate(180deg)}
+  .body{
+    border-top:1px dashed var(--border);
+    padding: 14px 16px 18px;
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:12px;
+  }
+  @media (min-width:720px){
+    .body{grid-template-columns: 2fr 3fr}
+  }
+  .anim{
+    display:flex; align-items:center; gap:12px; padding:10px; border:1px dashed var(--border); border-radius:10px;
+  }
+  .anim svg{width:64px; height:64px}
+  .tiny-note{color:var(--muted); font-size:12px}
+  ul.kv{margin:0; padding-left:16px}
+  .pillrow{display:flex; flex-wrap:wrap; gap:6px; margin-top:4px}
+  .pill{font-size:11px; border:1px solid var(--border); padding:4px 8px; border-radius:999px; color:var(--muted)}
+  .score{
+    display:flex; gap:10px; align-items:center; font-size:12px; color:var(--muted)
+  }
+  .bar{flex:1; height:6px; background:#0e1220; border-radius:999px; border:1px solid var(--border); position:relative; overflow:hidden}
+  .fill{position:absolute; inset:0; width:50%}
+  .ease .fill{background: linear-gradient(90deg, var(--accent-2), transparent); width: var(--ease, 60%)}
+  .flex .fill{background: linear-gradient(90deg, var(--accent), transparent); width: var(--flex, 40%)}
+  .footer{
+    text-align:center; padding:28px 18px; color:var(--muted); border-top:1px solid var(--border)
+  }
+
+  /* Tiny icon animations */
+  .pulse { animation: pulse 1.8s infinite ease-in-out }
+  @keyframes pulse { 0%,100%{transform: scale(1)} 50%{transform: scale(1.08)} }
+  .blink-line { stroke-dasharray: 60 8; animation: dash 2.2s linear infinite }
+  @keyframes dash { to { stroke-dashoffset: -140 } }
+  .wiggle { animation: wiggle 1.6s ease-in-out infinite }
+  @keyframes wiggle { 0%,100%{transform: rotate(0)} 50%{transform: rotate(-6deg)} }
+  .float { animation: float 2.8s ease-in-out infinite }
+  @keyframes float { 0%,100%{transform: translateY(0)} 50%{transform: translateY(-6px)} }
+  .ping { animation: ping 1.4s infinite }
+  @keyframes ping { 0%{transform: scale(1); opacity:1} 100%{transform: scale(1.25); opacity:.65} }
+
+  .searchbar{
+    position: relative; flex:1; min-width:220px;
+  }
+  .searchbar input{
+    width:100%; padding:10px 12px 10px 36px; border-radius:10px; border:1px solid var(--border); background:var(--card); color:var(--ink)
+  }
+  .searchbar svg{ position:absolute; left:10px; top:50%; transform: translateY(-50%); width:16px; height:16px; opacity:.8}
+  .legend{display:flex; gap:8px; flex-wrap:wrap; align-items:center; color:var(--muted); font-size:12px; margin-top:8px}
+  .dot{width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:4px; border:1px solid var(--border)}
+  .ease-dot{background: var(--accent-2)} .flex-dot{background: var(--accent)}
+  .toggle{
+    display:flex; gap:8px; align-items:center; padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:var(--card)
+  }
+  .small{font-size:12px; color:var(--muted)}
+  a.btn{display:inline-block; margin-top:8px; border:1px solid var(--border); padding:8px 10px; border-radius:8px; color:var(--ink); text-decoration:none; background:#101420}
+  .accordion-all{padding:0 18px 10px}
+</style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>NFC Keychain Programming Options</h1>
+      <p class="sub">Tap-to-anything. Browse options, see what each one does, and pick the best fit for your use case.</p>
+      <div class="controls">
+        <div class="searchbar">
+          <input id="q" placeholder="Search: menu, vCard, maps, payment, automation…" />
+          <svg viewBox="0 0 24 24" fill="none"><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/></svg>
+        </div>
+        <select id="category">
+          <option value="all">All categories</option>
+          <option>Communication</option>
+          <option>Links & Media</option>
+          <option>Commerce</option>
+          <option>Automation</option>
+          <option>Files & Docs</option>
+          <option>Navigation</option>
+        </select>
+        <select id="sort">
+          <option value="default">Sort: Our picks</option>
+          <option value="ease">Easiest first</option>
+          <option value="flex">Most flexible first</option>
+        </select>
+        <label class="toggle"><input type="checkbox" id="compact"/> <span>Compact view</span></label>
+      </div>
+      <div class="legend">
+        <span><span class="dot ease-dot"></span>Ease of use</span>
+        <span><span class="dot flex-dot"></span>Flexibility</span>
+        <span class="small">Scores are directional and phone/OS-dependent.</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="accordion-all wrap small">
+    <button id="expandAll" class="small a btn">Expand all</button>
+    <button id="collapseAll" class="small a btn">Collapse all</button>
+  </div>
+
+  <main class="wrap grid" id="grid"></main>
+
+  <footer class="footer">
+    Layered Visions 3D • Need help choosing? <a href="mailto:sales@layeredvisions3d.com" class="small" style="color:var(--ink)">sales@layeredvisions3d.com</a>
+  </footer>
+
+<script>
+const DATA = [
+  {
+    id:1,
+    title:"Website URL",
+    cat:"Links & Media",
+    desc:"Opens your website or any landing page.",
+    ease:95, flex:70,
+    pros:["Fast & universal","Trackable with UTM","Works even with older phones"],
+    cons:["Destination fixed unless using a shortener/redirect"],
+    bestFor:["General info","Single link to site or menu"],
+    setup:["Provide the URL you want to open"],
+    notes:["We recommend a mobile-friendly page"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <circle class="pulse" cx="32" cy="32" r="28" stroke="currentColor" opacity=".28"/>
+      <path d="M22 33c0-6 4-10 10-10h12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <path d="M34 41c6 0 10-4 10-10V19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+    </svg>`
+  },
+  {
+    id:2,title:"Redirect / Smart URL",cat:"Links & Media",
+    desc:"A dynamic link you can change later without reprogramming the tag.",
+    ease:90,flex:95,
+    pros:["Change destination anytime","Great for events & campaigns"],
+    cons:["Relies on a redirect service/server"],
+    bestFor:["Seasonal promos","Event → Album → Archive flows"],
+    setup:["Tell us your initial target & how you'd like it to change later"],
+    notes:["We can host the redirect for you if needed"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <path class="blink-line" d="M10 22H42" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <path class="blink-line" d="M22 32H54" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <path class="blink-line" d="M10 42H42" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <path d="M39 15l10 9-10 9" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`
+  },
+  {
+    id:3,title:"Digital business card (vCard / MeCard)",cat:"Communication",
+    desc:"Adds contact info to the phone’s address book.",
+    ease:88,flex:60,
+    pros:["One-tap save to contacts","Professional & quick"],
+    cons:["Character limits on some phones","iOS previews vary"],
+    bestFor:["Personal contact","Sales reps, owners"],
+    setup:["Send name, title, phone, email, website, address"],
+    notes:["We’ll optimize for iOS & Android formats"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <rect x="10" y="14" width="44" height="36" rx="6" stroke="currentColor"/>
+      <circle class="float" cx="24" cy="32" r="6" stroke="currentColor"/>
+      <path d="M34 28h14M34 34h10M34 40h14" stroke="currentColor" stroke-width="2"/>
+    </svg>`
+  },
+  {
+    id:4,title:"Phone number (tap‑to‑call)",cat:"Communication",
+    desc:"Starts a phone call to your chosen number.",
+    ease:98,flex:40,
+    pros:["Instant action","Great for service & bookings"],
+    cons:["Some users prefer to view info first"],
+    bestFor:["Phone-first businesses","Support lines"],
+    setup:["Provide the phone number"],
+    notes:["We can localize the number format"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <path d="M20 18c2 12 14 24 26 26" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+      <path class="ping" d="M44 44c3 0 6 3 6 6s-3 6-6 6" stroke="currentColor" stroke-width="3"/>
+      <path class="ping" d="M20 8c-3 0-6 3-6 6s3 6 6 6" stroke="currentColor" stroke-width="3"/>
+    </svg>`
+  },
+  {
+    id:5,title:"SMS message",cat:"Communication",
+    desc:"Opens SMS with a preset number and message.",
+    ease:92,flex:55,
+    pros:["Great for text-based promos","Frictionless opt-ins"],
+    cons:["iOS/Android handle line breaks differently"],
+    bestFor:["Text clubs","Quick inquiries"],
+    setup:["Number + prefilled message text"],
+    notes:["We’ll format for both major OSes"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <rect x="10" y="12" width="44" height="34" rx="6" stroke="currentColor"/>
+      <path class="blink-line" d="M16 22h24" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <path class="blink-line" d="M16 30h20" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <path d="M22 46l8-8 8 8" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`
+  },
+  {
+    id:6,title:"Email (mailto)",cat:"Communication",
+    desc:"Opens an email composer with fields prefilled.",
+    ease:90,flex:55,
+    pros:["Longer messages allowed","Auto-subject for routing"],
+    cons:["Relies on device email app setup"],
+    bestFor:["Support, B2B, resumes"],
+    setup:["To, CC/BCC (optional), subject, body"],
+    notes:["Emoji subject lines supported"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <rect x="10" y="16" width="44" height="32" rx="6" stroke="currentColor"/>
+      <path class="wiggle" d="M12 18l20 16 20-16" stroke="currentColor" stroke-width="3" fill="none"/>
+    </svg>`
+  },
+  {
+    id:7,title:"Wi‑Fi credentials",cat:"Automation",
+    desc:"One‑tap join for your Wi‑Fi (SSID + password).",
+    ease:80,flex:50,
+    pros:["Great for venues & events","No verbal passwords"],
+    cons:["iOS may prompt differently","Hidden SSIDs can be tricky"],
+    bestFor:["Shops, venues, Airbnbs"],
+    setup:["SSID, password, encryption type"],
+    notes:["We can include separate 2.4/5 GHz"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <path d="M8 26c16-12 32-12 48 0" stroke="currentColor" stroke-width="3" fill="none"/>
+      <path d="M16 34c12-9 20-9 32 0" stroke="currentColor" stroke-width="3" fill="none"/>
+      <circle class="pulse" cx="32" cy="44" r="4" fill="currentColor"/>
+    </svg>`
+  },
+  {
+    id:8,title:"App deep link",cat:"Links & Media",
+    desc:"Opens an app (or the App/Play Store if not installed).",
+    ease:75,flex:85,
+    pros:["Jump straight into an app screen","Supports parameters"],
+    cons:["App must support deep linking","Behaviors vary by platform"],
+    bestFor:["Ordering apps, loyalty apps"],
+    setup:["Provide example links & fallback URL"],
+    notes:["We’ll add Store fallback if app missing"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <rect x="18" y="10" width="28" height="44" rx="6" stroke="currentColor"/>
+      <circle class="float" cx="32" cy="22" r="6" stroke="currentColor"/>
+      <path d="M26 40h12" stroke="currentColor" stroke-width="3"/>
+    </svg>`
+  },
+  {
+    id:9,title:"Menu / PDF link",cat:"Files & Docs",
+    desc:"Opens a PDF menu, brochure, or ticket.",
+    ease:95,flex:65,
+    pros:["Simple and printable","Offline-friendly once cached"],
+    cons:["Large PDFs load slower on cellular"],
+    bestFor:["Restaurants, services, pricing sheets"],
+    setup:["Public PDF URL"],
+    notes:["We can host lightweight PDFs"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <rect x="14" y="8" width="30" height="48" rx="4" stroke="currentColor"/>
+      <path class="blink-line" d="M20 24h16M20 32h12M20 40h16" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <path d="M44 16l6 6-6 6" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`
+  },
+  {
+    id:10,title:"Photo or shared album link",cat:"Links & Media",
+    desc:"Opens a Google/album for uploads or viewing.",
+    ease:90,flex:70,
+    pros:["Perfect for events","Easy guest participation"],
+    cons:["Upload rights depend on the platform"],
+    bestFor:["Christenings, weddings, parties"],
+    setup:["Album URL & permissions preference"],
+    notes:["We can later retarget to an archive"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <rect x="12" y="18" width="40" height="26" rx="4" stroke="currentColor"/>
+      <circle class="pulse" cx="24" cy="31" r="5" stroke="currentColor"/>
+      <path d="M30 36l6-6 10 10H20z" fill="currentColor" opacity=".25"/>
+    </svg>`
+  },
+  {
+    id:11,title:"Video (YouTube/Vimeo) link",cat:"Links & Media",
+    desc:"Launch a demo or promo video instantly.",
+    ease:95,flex:65,
+    pros:["High engagement","Time-stamped starts"],
+    cons:["Cell data/buffer on weak signal"],
+    bestFor:["Product demos","Promo reels"],
+    setup:["Public video URL (can be unlisted)"],
+    notes:["We can append timestamp parameters"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <rect x="10" y="18" width="44" height="28" rx="6" stroke="currentColor"/>
+      <polygon class="wiggle" points="28,24 28,40 42,32" fill="currentColor"/>
+    </svg>`
+  },
+  {
+    id:12,title:"Social profile link",cat:"Links & Media",
+    desc:"Direct link to Instagram, TikTok, etc.",
+    ease:96,flex:55,
+    pros:["Grow followers","Track via platform analytics"],
+    cons:["Algorithm/platform changes"],
+    bestFor:["Influencers, shops, creators"],
+    setup:["Profile URL"],
+    notes:["We can use link pages to bundle accounts"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <circle cx="24" cy="32" r="10" stroke="currentColor"/>
+      <rect x="34" y="20" width="12" height="12" rx="3" stroke="currentColor"/>
+    </svg>`
+  },
+  {
+    id:13,title:"Coupon / discount code URL",cat:"Commerce",
+    desc:"Opens a promo page or applies a code.",
+    ease:92,flex:75,
+    pros:["Boost conversions","Auto‑apply codes"],
+    cons:["Store/cart platform limitations"],
+    bestFor:["Retail promos","Limited-time deals"],
+    setup:["URL + code (if separate)"],
+    notes:["We can add UTM tracking tags"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <rect x="12" y="18" width="40" height="24" rx="4" stroke="currentColor"/>
+      <path class="blink-line" d="M16 30h32" stroke="currentColor" stroke-width="3"/>
+      <circle cx="22" cy="30" r="3" fill="currentColor"/>
+      <circle cx="42" cy="30" r="3" fill="currentColor"/>
+    </svg>`
+  },
+  {
+    id:14,title:"Loyalty ID / Customer ID",cat:"Commerce",
+    desc:"Embed an ID string for CRM or POS lookups.",
+    ease:85,flex:80,
+    pros:["Fast identification","Works offline then syncs"],
+    cons:["Requires backend support"],
+    bestFor:["Membership & rewards"],
+    setup:["ID scheme + endpoint/fallback URL"],
+    notes:["Consider QR as backup on signage"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <rect x="14" y="14" width="36" height="24" rx="4" stroke="currentColor"/>
+      <path d="M20 22h12M20 28h18" stroke="currentColor" stroke-width="3"/>
+      <rect class="pulse" x="22" y="40" width="20" height="8" rx="4" fill="currentColor" opacity=".25"/>
+    </svg>`
+  },
+  {
+    id:15,title:"Order form / lead form",cat:"Files & Docs",
+    desc:"Opens a form for orders or inquiries.",
+    ease:94,flex:70,
+    pros:["Instant capture","Auto‑route to email/CRM"],
+    cons:["Too many fields kills completion"],
+    bestFor:["B2B leads","Custom orders"],
+    setup:["Form link + desired fields"],
+    notes:["We can prefill known fields"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <rect x="14" y="10" width="36" height="44" rx="6" stroke="currentColor"/>
+      <path class="blink-line" d="M20 22h22M20 30h18M20 38h22" stroke="currentColor" stroke-width="3"/>
+      <path d="M20 46h10" stroke="currentColor" stroke-width="3"/>
+    </svg>`
+  },
+  {
+    id:16,title:"Menu ordering / delivery link",cat:"Commerce",
+    desc:"Direct to ordering pages (DoorDash or your site).",
+    ease:96,flex:70,
+    pros:["Reduce taps to checkout","Works with third‑party apps"],
+    cons:["Fees on marketplaces"],
+    bestFor:["Restaurants, cafes, ghost kitchens"],
+    setup:["Link to ordering page(s)"],
+    notes:["We can A/B test via dynamic redirects"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <path d="M10 40h44" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+      <circle class="pulse" cx="24" cy="44" r="4" fill="currentColor" opacity=".4"/>
+      <circle class="pulse" cx="40" cy="44" r="4" fill="currentColor" opacity=".4"/>
+      <rect x="16" y="18" width="32" height="18" rx="4" stroke="currentColor"/>
+    </svg>`
+  },
+  {
+    id:17,title:"Map location",cat:"Navigation",
+    desc:"Opens your store pin in Apple/Google Maps.",
+    ease:97,flex:60,
+    pros:["Guides customers to you","Supports custom pins"],
+    cons:["Needs correct address/coords"],
+    bestFor:["Retail, events, pop‑ups"],
+    setup:["Address or GPS coordinates"],
+    notes:["We can add UTM for ‘Get Directions’"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <path d="M32 8c8 0 14 6 14 14 0 12-14 24-14 24S18 34 18 22c0-8 6-14 14-14z" stroke="currentColor" stroke-width="3"/>
+      <circle class="float" cx="32" cy="22" r="4" fill="currentColor"/>
+    </svg>`
+  },
+  {
+    id:18,title:"Calendar event (ICS link)",cat:"Automation",
+    desc:"Add an event to the phone calendar.",
+    ease:88,flex:65,
+    pros:["Lock in attendance","Reminders attached"],
+    cons:["Timezones & DST matter"],
+    bestFor:["Launches, pop‑ups, ticketed events"],
+    setup:["Event title, time, location, details"],
+    notes:["We’ll generate cross‑platform ICS"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <rect x="12" y="14" width="40" height="36" rx="6" stroke="currentColor"/>
+      <rect class="pulse" x="20" y="28" width="8" height="8" rx="2" fill="currentColor"/>
+      <rect x="32" y="28" width="8" height="8" rx="2" stroke="currentColor"/>
+    </svg>`
+  },
+  {
+    id:19,title:"Payment / donation link",cat:"Commerce",
+    desc:"Link to a secure payment processor.",
+    ease:92,flex:75,
+    pros:["No card handling","Takes Apple/Google Pay"],
+    cons:["Processor fees apply"],
+    bestFor:["Nonprofits, deposits, tips"],
+    setup:["Checkout URL (Stripe, PayPal, etc.)"],
+    notes:["Avoids card emulation (not supported)"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <rect x="10" y="20" width="44" height="26" rx="6" stroke="currentColor"/>
+      <rect class="float" x="16" y="26" width="18" height="10" rx="3" fill="currentColor" opacity=".25"/>
+      <circle cx="44" cy="33" r="3" fill="currentColor"/>
+    </svg>`
+  },
+  {
+    id:20,title:"Short text / note display",cat:"Communication",
+    desc:"Show a short message or instructions on tap.",
+    ease:98,flex:45,
+    pros:["Works offline after read","Great for quick tips"],
+    cons:["Length limits apply","No analytics"],
+    bestFor:["Care instructions, quick codes"],
+    setup:["Provide your short message"],
+    notes:["We can link to details as fallback"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <rect x="14" y="14" width="36" height="36" rx="6" stroke="currentColor"/>
+      <path class="blink-line" d="M20 28h24M20 36h18" stroke="currentColor" stroke-width="3"/>
+    </svg>`
+  },
+  {
+    id:21,title:"Automation trigger (IFTTT/Zapier webhook)",cat:"Automation",
+    desc:"Fire a webhook to trigger workflows.",
+    ease:70,flex:95,
+    pros:["Super flexible","Connects to 1,000s of apps"],
+    cons:["Requires webhook endpoint","Network required"],
+    bestFor:["CRM logging, Slack pings, lights"],
+    setup:["Provide webhook URL & payload"],
+    notes:["We can include a fallback landing page"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <circle cx="20" cy="32" r="8" stroke="currentColor"/>
+      <circle cx="44" cy="20" r="6" stroke="currentColor"/>
+      <circle cx="44" cy="44" r="6" stroke="currentColor"/>
+      <path class="blink-line" d="M26 30l12-8M26 34l12 8" stroke="currentColor" stroke-width="3"/>
+    </svg>`
+  },
+  {
+    id:22,title:"Password‑protected content link",cat:"Files & Docs",
+    desc:"Opens content that requires a passcode.",
+    ease:84,flex:80,
+    pros:["Gate private content","Rotate passwords easily"],
+    cons:["Adds one extra step for users"],
+    bestFor:["VIP menus, private docs"],
+    setup:["Hosted page & password policy"],
+    notes:["We can host & manage access"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <rect x="14" y="26" width="36" height="24" rx="6" stroke="currentColor"/>
+      <path d="M22 26v-4a10 10 0 1120 0v4" stroke="currentColor" stroke-width="3"/>
+      <circle class="pulse" cx="32" cy="38" r="3" fill="currentColor"/>
+    </svg>`
+  },
+  {
+    id:23,title:"Survey / feedback page",cat:"Files & Docs",
+    desc:"Quick rating or NPS form for customers.",
+    ease:92,flex:70,
+    pros:["Capture feedback fast","Export to Sheets/CRM"],
+    cons:["Survey fatigue is real"],
+    bestFor:["Service follow‑ups","Event exits"],
+    setup:["Form URL + desired fields"],
+    notes:["We can add QR backup on receipts"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <rect x="14" y="10" width="36" height="44" rx="6" stroke="currentColor"/>
+      <path d="M22 24h20M22 32h16" stroke="currentColor" stroke-width="3"/>
+      <path class="pulse" d="M22 40h8" stroke="currentColor" stroke-width="3"/>
+    </svg>`
+  },
+  {
+    id:24,title:"Multi‑action hub page",cat:"Links & Media",
+    desc:"Opens a mini page with multiple buttons (call, menu, socials).",
+    ease:88,flex:92,
+    pros:["One tag, many actions","Easy to update"],
+    cons:["Needs a hosted page"],
+    bestFor:["All‑in‑one tap hubs"],
+    setup:["List of buttons & priority order"],
+    notes:["We can design & host the hub page"],
+    svg:`<svg viewBox="0 0 64 64" fill="none">
+      <rect x="10" y="12" width="44" height="40" rx="8" stroke="currentColor"/>
+      <circle class="float" cx="24" cy="28" r="6" stroke="currentColor"/>
+      <rect x="34" y="22" width="12" height="6" rx="3" stroke="currentColor"/>
+      <rect x="20" y="38" width="26" height="6" rx="3" stroke="currentColor"/>
+    </svg>`
+  }
+];
+
+const grid = document.getElementById('grid');
+const q = document.getElementById('q');
+const category = document.getElementById('category');
+const sortSel = document.getElementById('sort');
+const compact = document.getElementById('compact');
+const expandAll = document.getElementById('expandAll');
+const collapseAll = document.getElementById('collapseAll');
+
+function scoreBadge(item){
+  const k = item.cat;
+  if(k === "Links & Media") return "Popular";
+  if(k === "Commerce") return "Sell";
+  if(k === "Automation") return "Automate";
+  if(k === "Files & Docs") return "Docs";
+  if(k === "Communication") return "Contact";
+  if(k === "Navigation") return "Map";
+  return "Option";
+}
+
+function render(){
+  grid.innerHTML = "";
+  let items = DATA.slice();
+
+  // filter
+  const query = q.value.toLowerCase().trim();
+  if(category.value !== "all"){
+    items = items.filter(d => d.cat === category.value);
+  }
+  if(query){
+    items = items.filter(d => (d.title + " " + d.desc + " " + (d.bestFor||[]).join(" ") + " " + (d.setup||[]).join(" ")).toLowerCase().includes(query));
+  }
+  // sort
+  if(sortSel.value === "ease") items.sort((a,b)=> b.ease - a.ease);
+  else if(sortSel.value === "flex") items.sort((a,b)=> b.flex - a.flex);
+  else items.sort((a,b)=> (b.ease + b.flex) - (a.ease + a.flex));
+
+  for(const d of items){
+    const det = document.createElement('details');
+    det.className = 'option';
+    det.dataset.id = d.id;
+    const sum = document.createElement('summary');
+    sum.innerHTML = `
+      <span class="icon">${d.svg}</span>
+      <div style="display:grid; gap:2px">
+        <span class="title">${d.title}</span>
+        <span class="desc">${d.desc}</span>
+      </div>
+      <span class="badge">${scoreBadge(d)}</span>
+      <svg class="chev" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2"/></svg>
+    `;
+    const body = document.createElement('div');
+    body.className = 'body';
+    body.innerHTML = `
+      <div class="anim">
+        ${d.svg}
+        <div>
+          <div class="score ease">Ease <div class="bar ease" style="--ease:${d.ease}%"><div class="fill"></div></div></div>
+          <div class="score flex">Flexibility <div class="bar flex" style="--flex:${d.flex}%"><div class="fill"></div></div></div>
+          <div class="pillrow">
+            ${(d.bestFor||[]).map(t=>`<span class="pill">${t}</span>`).join('')}
+          </div>
+          <p class="tiny-note">${d.notes?.[0]||""}</p>
+        </div>
+      </div>
+      <div>
+        <h4 style="margin:4px 0 6px">Pros</h4>
+        <ul class="kv">${d.pros.map(p=>`<li>${p}</li>`).join('')}</ul>
+        <h4 style="margin:10px 0 6px">Considerations</h4>
+        <ul class="kv">${d.cons.map(p=>`<li>${p}</li>`).join('')}</ul>
+        <h4 style="margin:10px 0 6px">What we need</h4>
+        <ul class="kv">${(d.setup||[]).map(p=>`<li>${p}</li>`).join('')}</ul>
+      </div>
+    `;
+    det.appendChild(sum);
+    det.appendChild(body);
+    grid.appendChild(det);
+  }
+  document.documentElement.classList.toggle('compact', compact.checked);
+}
+
+q.addEventListener('input', render);
+category.addEventListener('change', render);
+sortSel.addEventListener('change', render);
+compact.addEventListener('change', ()=>{
+  document.querySelectorAll('details').forEach(d=> d.open = !compact.checked);
+  render();
+});
+expandAll.addEventListener('click', ()=>{ document.querySelectorAll('details').forEach(d=> d.open = true) });
+collapseAll.addEventListener('click', ()=>{ document.querySelectorAll('details').forEach(d=> d.open = false) });
+
+render();
+</script>
+</body>
+</html>
